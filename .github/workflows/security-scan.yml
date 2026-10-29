@@ -24,7 +24,11 @@ jobs:
           enable-cache: true
 
       - name: Export locked dependencies
-        run: uv export --format requirements-txt --no-dev --no-emit-project --output-file requirements-audit.txt
+        # --no-hashes：pip 无法对 VCS（git）依赖做哈希校验，带 hash 会直接失败
+        # --no-emit-package：yyc3-harness/memory/gateway 为 YYC3-Agent-Core
+        #   私有 monorepo 的一方包（git 依赖），审计无意义且 runner 无法拉取；
+        #   其 PyPI 传递依赖不受影响，仍在审计范围内
+        run: uv export --format requirements-txt --no-dev --no-emit-project --no-hashes --no-emit-package yyc3-harness --no-emit-package yyc3-memory --no-emit-package yyc3-gateway --output-file requirements-audit.txt
 
       - name: pip-audit
         run: uvx pip-audit -r requirements-audit.txt
