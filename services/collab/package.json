@@ -1,0 +1,16 @@
+{
+  "name": "yyc3-collab",
+  "private": true,
+  "version": "1.0.0",
+  "description": "YYC³ CRDT 协作服务（房间令牌鉴权的 y-websocket 转发层）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.21.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

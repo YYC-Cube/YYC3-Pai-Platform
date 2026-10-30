@@ -22,6 +22,28 @@
 # =============================================================================
 
 services:
+  collab:
+    # YYC³ CRDT 协作服务：为前端 pai.yyc3.vip 提供房间令牌鉴权的 y-websocket
+    # 鉴权：COLLAB_TOKENS（静态白名单，逗号分隔）或 COLLAB_SECRET（HMAC 房间令牌）
+    image: node:20-alpine
+    container_name: yyc3-collab
+    restart: unless-stopped
+    working_dir: /srv
+    command: sh -c "npm ci --omit=dev --no-fund --no-audit && node server.js"
+    volumes:
+      - ../services/collab:/srv
+    ports:
+      - "${YYC3_COLLAB_PORT:-8090}:8080"
+    environment:
+      - PORT=8080
+      - COLLAB_TOKENS=${YYC3_COLLAB_TOKENS:-}
+      - COLLAB_SECRET=${YYC3_COLLAB_SECRET:-}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8080/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
   pai:
     build:
       context: ..
